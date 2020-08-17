@@ -1,0 +1,3 @@
+https://www.jimhribar.com/developing-wow-addons/
+https://www.wowhead.com/guide=1949/addon-writing-guide-a-basic-introduction-by-example
+https://vanilla-wow.fandom.com/wiki/AddOn_programming_tutorial

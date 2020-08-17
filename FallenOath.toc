@@ -1,0 +1,11 @@
+## Interface: 11305
+## Title: Fallen Oath Guild Addons
+## Notes: Fallen Oath Guild Addons
+## Author: Fallen Oath Guild Members
+## Version: 1.0
+
+sandbox.lua
+
+# Main file for the addon
+# Please keep this file at the bottom
+main.lua
