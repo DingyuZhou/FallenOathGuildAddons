@@ -2,14 +2,15 @@ local addonName, namespace = ...
 
 local editBox = {}
 
-function editBox.create(name, autoFocus, text)
-  local mainFrameName = name .. "EditBoxFrame"
-  local editBoxName = name .. 'EditBox'
+function editBox.create(editBoxName, autoFocus, text)
+  local mainFrameName = editBoxName .. "EditBoxFrame"
+  local newEditBoxName = editBoxName .. 'EditBox'
   local mainFrame = _G[mainFrameName]
 
   if not mainFrame then
     local f = CreateFrame("Frame", mainFrameName, UIParent)
     mainFrame = f
+    f:Hide()
 
     f:SetPoint("CENTER")
     f:SetSize(600, 500)
@@ -33,7 +34,7 @@ function editBox.create(name, autoFocus, text)
     f:SetScript("OnMouseUp", f.StopMovingOrSizing)
     
     -- ScrollFrame
-    local scrollFrameName = editBoxName .. "ScrollFrame"
+    local scrollFrameName = newEditBoxName .. "ScrollFrame"
     local sf = CreateFrame("ScrollFrame", scrollFrameName, f, "UIPanelScrollFrameTemplate")
     sf:SetPoint("LEFT", 16, 0)
     sf:SetPoint("RIGHT", -32, 0)
@@ -41,7 +42,7 @@ function editBox.create(name, autoFocus, text)
     sf:SetPoint("BOTTOM", f, "BOTTOM", 0, 20)
     
     -- EditBox
-    local eb = CreateFrame("EditBox", editBoxName, sf)
+    local eb = CreateFrame("EditBox", newEditBoxName, sf)
     eb:SetSize(sf:GetSize())
     eb:SetMultiLine(true)
     eb:SetAutoFocus(autoFocus)
@@ -73,16 +74,14 @@ function editBox.create(name, autoFocus, text)
       self:GetHighlightTexture():Show()
       eb:SetWidth(sf:GetWidth())
     end)
-    f:Show()
   end
   
+  local newEditBox = _G[newEditBoxName]
   if text then
-    local editBox = _G[editBoxName]
-    print(editBox)
-    editBox:SetText(text)
+    newEditBox:SetText(text)
   end
 
-  mainFrame:Show()
+  return mainFrame, newEditBox
 end
 
 namespace.editBox = editBox
