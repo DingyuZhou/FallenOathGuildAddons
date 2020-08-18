@@ -2,12 +2,12 @@ local addonName, namespace = ...
 
 button = {}
 
-function button.create(buttonName, buttonText, buttonOnClick, buttonWidth, buttonHeight)
+function button.create(buttonParent, buttonName, buttonText, buttonOnClick, buttonWidth, buttonHeight)
   local newButtonName = buttonName .. 'Button'
   local newButton = _G[newButtonName]
 
   if not newButton then
-    local b = CreateFrame("Button", newButtonName, UIParent, "UIPanelButtonTemplate")
+    local b = CreateFrame("Button", newButtonName, buttonParent, "UIPanelButtonTemplate")
     newButton = b
     b:Hide()
 

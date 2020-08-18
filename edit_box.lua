@@ -2,13 +2,13 @@ local addonName, namespace = ...
 
 local editBox = {}
 
-function editBox.create(editBoxName, autoFocus, text)
+function editBox.create(editBoxParent, editBoxName, autoFocus, text)
   local mainFrameName = editBoxName .. "EditBoxFrame"
   local newEditBoxName = editBoxName .. 'EditBox'
   local mainFrame = _G[mainFrameName]
 
   if not mainFrame then
-    local f = CreateFrame("Frame", mainFrameName, UIParent)
+    local f = CreateFrame("Frame", mainFrameName, editBoxParent)
     mainFrame = f
     f:Hide()
 
