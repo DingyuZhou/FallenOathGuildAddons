@@ -96,6 +96,14 @@ function editBox.create(editBoxParent, editBoxName, editBoxConfig)
     mainFrame:Hide()
   end
 
+  function mainFrame:SetText(text)
+    newEditBox:SetText(text)
+  end
+
+  function mainFrame:GetText(text)
+    return newEditBox:GetText(text)
+  end
+
   return mainFrame, newEditBox
 end
 
