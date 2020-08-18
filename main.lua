@@ -9,15 +9,16 @@ local sandbox = namespace.sandbox
 
 -- sandbox.sayHelloWorld()
 
-local inputBox = editBox.create(UIParent, "RaidRosterInput", true)
+local inputBox, inputBoxEditBox = editBox.create(UIParent, "RaidRosterInput", true)
 local outputBox, outputBoxEditBox = editBox.create(UIParent, "RaidRosterOutput", false)
 
-function printRaidRoster()
-  local roster = raidRoster.getRaidRoster()
-  outputBoxEditBox:SetText(util.toString(roster))
+function printRaidDkpResults()
+  local newMemberNames, dkpStr = raidRoster.generateRaidDkp(inputBoxEditBox:GetText(), 2, 1)
+  inputBoxEditBox:SetText(newMemberNames)
+  outputBoxEditBox:SetText(dkpStr)
 end
 
-local printRaidRosterButton = button.create(UIParent, "printRaidRoster", "Print Raid Roster", printRaidRoster, 150)
+local printRaidRosterButton = button.create(UIParent, "printRaidRoster", "Print Raid Roster", printRaidDkpResults, 150)
 
 function startAddon()
   inputBox:Show()
