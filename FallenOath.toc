@@ -4,6 +4,10 @@
 ## Author: Fallen Oath Guild Members
 ## Version: 1.0
 
+# Module order matters
+# Dependencies should be put in the list first
+util.lua
+raid_roster.lua
 sandbox.lua
 
 # Main file for the addon
