@@ -3,6 +3,7 @@
 ## Notes: Fallen Oath Guild Addons
 ## Author: Fallen Oath Guild Members
 ## Version: 1.0
+## SavedVariablesPerCharacter: FallenOathRaidDkpRecords, FallenOathRaidMembers
 
 # Module order matters
 # Dependencies should be put in the list first

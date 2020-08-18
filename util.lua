@@ -26,4 +26,8 @@ function util.splitString(inputStr, separator)
   return array
 end
 
+function util.trimString(inputStr)
+  return (string.gsub(inputStr, "^%s*(.-)%s*$", "%1"))
+end
+
 namespace.util = util
