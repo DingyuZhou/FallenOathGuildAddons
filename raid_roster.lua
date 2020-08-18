@@ -115,20 +115,22 @@ function raidRoster.generateRaidDkp(newDkpType, memberNames, onlineMemberPoints,
     local type = raidRoster.dkpTypeArray[index]
     dkpStr = dkpStr .. type .. "-Status\t" .. type .. "-Points\t"
   end
-  dkpStr = dkpStr .. "\n"
+  dkpStr = dkpStr .. "TotalPoints" .. "\n"
 
   for index = 1, #memberNameArray do
     local memberName = memberNameArray[index]
     newMemberNames = newMemberNames .. memberName .. "\n"
 
     dkpStr = dkpStr .. memberName .. "\t"
+    local totalDkpPoints = 0
     local dkpRecords = raidRoster.dkpRecords[memberName] or {}
     for index = 1, #raidRoster.dkpTypeArray do
       local type = raidRoster.dkpTypeArray[index]
       local record = dkpRecords[type] or {}
       dkpStr = dkpStr .. (record.status or "absent") .. "\t" .. (record.points or 0) .. "\t"
+      totalDkpPoints = totalDkpPoints + (record.points or 0)
     end
-    dkpStr = dkpStr .. "\n"
+    dkpStr = dkpStr .. tostring(totalDkpPoints) .. "\n"
   end
 
   raidRoster.memberNames = newMemberNames
@@ -164,20 +166,22 @@ function raidRoster.removeRaidDkpType(dkpTypeToRemove)
     local type = raidRoster.dkpTypeArray[index]
     dkpStr = dkpStr .. type .. "-Status\t" .. type .. "-Points\t"
   end
-  dkpStr = dkpStr .. "\n"
+  dkpStr = dkpStr .. "TotalPoints" .. "\n"
 
   for index = 1, #memberNameArray do
     local memberName = memberNameArray[index]
     newMemberNames = newMemberNames .. memberName .. "\n"
 
     dkpStr = dkpStr .. memberName .. "\t"
+    local totalDkpPoints = 0
     local dkpRecords = raidRoster.dkpRecords[memberName] or {}
     for index = 1, #raidRoster.dkpTypeArray do
       local type = raidRoster.dkpTypeArray[index]
       local record = dkpRecords[type] or {}
       dkpStr = dkpStr .. (record.status or "absent") .. "\t" .. (record.points or 0) .. "\t"
+      totalDkpPoints = totalDkpPoints + (record.points or 0)
     end
-    dkpStr = dkpStr .. "\n"
+    dkpStr = dkpStr .. tostring(totalDkpPoints) .. "\n"
   end
 
   _G.FallenOathRaidDkpRecords = dkpStr
