@@ -2,18 +2,21 @@ local addonName, namespace = ...
 
 local editBox = {}
 
-function editBox.create(editBoxParent, editBoxName, autoFocus, text)
+function editBox.create(editBoxParent, editBoxName, editBoxConfig)
   local mainFrameName = editBoxName .. "EditBoxFrame"
   local newEditBoxName = editBoxName .. 'EditBox'
   local mainFrame = _G[mainFrameName]
+  local config = editBoxConfig or {}
 
   if not mainFrame then
     local f = CreateFrame("Frame", mainFrameName, editBoxParent)
     mainFrame = f
-    f:Hide()
 
-    f:SetPoint("CENTER")
-    f:SetSize(600, 500)
+    if config.isAtCenter then f:SetPoint("CENTER") end
+
+    local width = config.width or 300
+    local height = config.height or 500
+    f:SetSize(width, height)
     
     f:SetBackdrop({
       bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -24,14 +27,16 @@ function editBox.create(editBoxParent, editBoxName, autoFocus, text)
     f:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
     
     -- Movable
-    f:SetMovable(true)
-    f:SetClampedToScreen(true)
-    f:SetScript("OnMouseDown", function(self, button)
-      if button == "LeftButton" then
-        self:StartMoving()
-      end
-    end)
-    f:SetScript("OnMouseUp", f.StopMovingOrSizing)
+    if config.isMovable then
+      f:SetMovable(true)
+      f:SetClampedToScreen(true)
+      f:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" then
+          self:StartMoving()
+        end
+      end)
+      f:SetScript("OnMouseUp", f.StopMovingOrSizing)
+    end
     
     -- ScrollFrame
     local scrollFrameName = newEditBoxName .. "ScrollFrame"
@@ -45,40 +50,50 @@ function editBox.create(editBoxParent, editBoxName, autoFocus, text)
     local eb = CreateFrame("EditBox", newEditBoxName, sf)
     eb:SetSize(sf:GetSize())
     eb:SetMultiLine(true)
-    eb:SetAutoFocus(autoFocus)
+    if config.isAutoFocus then
+      eb:SetAutoFocus(config.isAutoFocus)
+    end
     eb:SetFontObject("ChatFontNormal")
     -- eb:SetScript("OnEscapePressed", function() f:Hide() end)
     sf:SetScrollChild(eb)
     
     -- Resizable
-    f:SetResizable(true)
-    f:SetMinResize(150, 100)
-    
-    local resizeButtonName = mainFrameName .. "ResizeButton"
-    local rb = CreateFrame("Button", resizeButtonName, f)
-    rb:SetPoint("BOTTOMRIGHT", -6, 7)
-    rb:SetSize(16, 16)
-    
-    rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
-    rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
-    rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
-    
-    rb:SetScript("OnMouseDown", function(self, button)
-      if button == "LeftButton" then
-        f:StartSizing("BOTTOMRIGHT")
-        self:GetHighlightTexture():Hide() -- more noticeable
-      end
-    end)
-    rb:SetScript("OnMouseUp", function(self, button)
-      f:StopMovingOrSizing()
-      self:GetHighlightTexture():Show()
-      eb:SetWidth(sf:GetWidth())
-    end)
+    if config.isResizable then
+      f:SetResizable(true)
+      f:SetMinResize(150, 100)
+      
+      local resizeButtonName = mainFrameName .. "ResizeButton"
+      local rb = CreateFrame("Button", resizeButtonName, f)
+      rb:SetPoint("BOTTOMRIGHT", -6, 7)
+      rb:SetSize(16, 16)
+      
+      rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+      rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+      rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+      
+      rb:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" then
+          f:StartSizing("BOTTOMRIGHT")
+          self:GetHighlightTexture():Hide() -- more noticeable
+        end
+      end)
+      rb:SetScript("OnMouseUp", function(self, button)
+        f:StopMovingOrSizing()
+        self:GetHighlightTexture():Show()
+        eb:SetWidth(sf:GetWidth())
+      end)
+    end
   end
   
   local newEditBox = _G[newEditBoxName]
-  if text then
-    newEditBox:SetText(text)
+  if config.text then
+    newEditBox:SetText(config.text)
+  end
+
+  if config.isVisible then
+    mainFrame:Show()
+  else
+    mainFrame:Hide()
   end
 
   return mainFrame, newEditBox
