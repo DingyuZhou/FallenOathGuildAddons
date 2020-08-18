@@ -15,4 +15,15 @@ function util.toString(o)
   end
 end
 
+function util.splitString(inputStr, separator)
+  local sep = separator or "%s"
+  local array = {}
+  local index = 1
+  for str in string.gmatch(inputStr, "([^"..sep.."]+)") do
+    array[index] = str
+    index = index + 1
+  end
+  return array
+end
+
 namespace.util = util
