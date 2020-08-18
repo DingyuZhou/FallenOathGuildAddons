@@ -8,6 +8,7 @@
 # Dependencies should be put in the list first
 util.lua
 raid_roster.lua
+edit_box.lua
 sandbox.lua
 
 # Main file for the addon
