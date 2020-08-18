@@ -16,18 +16,31 @@ function raidRoster.getRaidRoster()
   return roster
 end
 
-function raidRoster.generateRaidDkp(memberNames, onlineMemberPoints, offlineMemberPoints)
+function raidRoster.generateRaidDkp(dkpNote, memberNames, onlineMemberPoints, offlineMemberPoints)
   local roster = raidRoster.getRaidRoster()
 
   local memberNameArray = util.splitString(memberNames)
 
-  local dkpStr = ''
+  if #memberNameArray == 0 then
+    return "", "Warning: please input valid raid member names first, and then try to generate DKP again."
+  end
+
+  local dkpStr = "Member Name\tMemberStatus\t" .. dkpNote .. "\n"
   for index = 1, #memberNameArray do
     local memberName = memberNameArray[index]
     local memberInfo = roster[memberName] or {}
-    local memberClass = memberInfo.class or 'not_found'
-    local points = memberInfo.online and onlineMemberPoints or offlineMemberPoints
-    dkpStr = dkpStr .. memberName .. "\t" .. memberClass .. "\t" .. tostring(points) .. "\n"
+    local memberStatus = "absent"
+    local points = 0
+    if memberInfo.class then
+      if memberInfo.online then
+        points = onlineMemberPoints
+        memberStatus = memberInfo.class
+      else
+        points = offlineMemberPoints
+        memberStatus = memberInfo.class .. " (offline)"
+      end
+    end
+    dkpStr = dkpStr .. memberName .. "\t" .. memberStatus .. "\t" .. tostring(points) .. "\n"
     memberInfo.hasRecorded = true
   end
 

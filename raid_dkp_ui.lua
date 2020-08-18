@@ -2,20 +2,21 @@ local addonName, namespace = ...
 
 local button = namespace.button
 local confirmDialog = namespace.confirmDialog
+local raidRoster = namespace.raidRoster
 
 local raidDkpUi = {}
 
-function raidDkpUi.create(dkpGenerateHandler, noteDkpRemoveHandler)
+function raidDkpUi.create(dkpTypeRemoveHandler)
   local raidDkpUiName = "RaidDkpUi"
   local mainFrameName = raidDkpUiName .. "MainFrame"
   local inputBoxName = raidDkpUiName .. "InputBox"
   local outputBoxName = raidDkpUiName .. "OutputBox"
-  local dkpNoteEditBoxName = raidDkpUiName .. "DkpNoteEditBox"
+  local dkpTypeEditBoxName = raidDkpUiName .. "DkpTypeEditBox"
   local onlineMemberPointEditBoxName = raidDkpUiName .. "OnlineMemberPointEditBox"
   local offlineMemberPointEditBoxName = raidDkpUiName .. "OfflineMemberPointEditBox"
   local dkpGenerateButtonName = raidDkpUiName .. "DkpGenerateButton"
-  local removeNoteDkpButtonName = raidDkpUiName .. "RemoveNoteDkpButton"
-  local removeNoteDkpConfirmDialogName = raidDkpUiName .. "RemoveNoteDkpConfirmDialog"
+  local removeDkpTypeButtonName = raidDkpUiName .. "RemoveDkpTypeButton"
+  local removeDkpTypeConfirmDialogName = raidDkpUiName .. "RemoveDkpTypeConfirmDialog"
   local closeButtonName = raidDkpUiName .. "CloseButton"
   local mainFrame = _G[mainFrameName]
 
@@ -104,8 +105,8 @@ function raidDkpUi.create(dkpGenerateHandler, noteDkpRemoveHandler)
     ob:SetScript("OnEscapePressed", function() f:Hide() end)
     obsf:SetScrollChild(ob)
 
-    -- DKP Note Edit Box
-    local dneb = CreateFrame("EditBox", dkpNoteEditBoxName, f)
+    -- DKP Type Edit Box
+    local dneb = CreateFrame("EditBox", dkpTypeEditBoxName, f)
     dneb:SetMultiLine(false)
     dneb:SetAutoFocus(false)
     dneb:SetFontObject("ChatFontNormal")
@@ -118,9 +119,9 @@ function raidDkpUi.create(dkpGenerateHandler, noteDkpRemoveHandler)
       insets = { left = -10, right = -10, top = -10, bottom = -10 }
     })
 
-    local dkpNoteHintText = f:CreateFontString(f, "OVERLAY", "GameTooltipText")
-    dkpNoteHintText:SetPoint("TOPLEFT", dneb, "TOPLEFT", -8, 25)
-    dkpNoteHintText:SetText("DKP Note")
+    local dkpTypeHintText = f:CreateFontString(f, "OVERLAY", "GameTooltipText")
+    dkpTypeHintText:SetPoint("TOPLEFT", dneb, "TOPLEFT", -8, 25)
+    dkpTypeHintText:SetText("DKP Type")
 
     -- Online Member Points Edit Box
     local onlinePointEb = CreateFrame("EditBox", onlineMemberPointEditBoxName, f)
@@ -159,13 +160,18 @@ function raidDkpUi.create(dkpGenerateHandler, noteDkpRemoveHandler)
     offlinePointHintText:SetText("Offline Member Points")
 
     -- DKP Generate Button
-    local dkpGenerateButton = button.create(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateHandler or (function() return nil end), { isVisible = true, width = 130 })
+    local dkpGenerateHandler = function()
+      local newMemberNames, dkpStr = raidRoster.generateRaidDkp(dneb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
+      ib:SetText(newMemberNames)
+      ob:SetText(dkpStr)
+    end
+    local dkpGenerateButton = button.create(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateHandler, { isVisible = true, width = 130 })
     dkpGenerateButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -260)
 
-    -- Remove Note DKP Button
-    local removeNoteDkpConfirmDialog = confirmDialog.create(removeNoteDkpConfirmDialogName, noteDkpRemoveHandler)
-    local removeNoteDkpButton = button.create(f, removeNoteDkpButtonName, "Remove Note DKP", removeNoteDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
-    removeNoteDkpButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -300)
+    -- Remove DKP Type Button
+    local removeDkpTypeConfirmDialog = confirmDialog.create(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
+    local removeDkpTypeButton = button.create(f, removeDkpTypeButtonName, "Remove DKP Type", removeDkpTypeConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    removeDkpTypeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -300)
 
     -- Close Button
     local closeButton = button.create(f, closeButtonName, "Close", function() f:Hide() end, { isVisible = true, width = 130 })
@@ -201,21 +207,36 @@ function raidDkpUi.create(dkpGenerateHandler, noteDkpRemoveHandler)
   -- Interfaces
   local inputBox = _G[inputBoxName]
   local outputBox = _G[outputBoxName]
+  local dkpTypeEditBox = _G[dkpTypeEditBoxName]
+  local onlineMemberPointEditBox = _G[onlineMemberPointEditBoxName]
+  local offlineMemberPointEditBox = _G[offlineMemberPointEditBoxName]
 
   function mainFrame:setInputBoxText(text)
     inputBox:SetText(text)
   end
 
-  function mainFrame:getInputBoxText(text)
-    return inputBox:GetText(text)
+  function mainFrame:getInputBoxText()
+    return inputBox:GetText()
   end
 
   function mainFrame:setOutputBoxText(text)
     outputBox:SetText(text)
   end
 
-  function mainFrame:getOutputBoxText(text)
-    return outputBox:GetText(text)
+  function mainFrame:getOutputBoxText()
+    return outputBox:GetText()
+  end
+
+  function mainFrame:getDkpType()
+    return dkpTypeEditBox:GetText()
+  end
+
+  function mainFrame:getOnlineMemberPoints()
+    return onlineMemberPointEditBox:GetText()
+  end
+
+  function mainFrame:getOfflineMemberPoints()
+    return offlineMemberPointEditBox:GetText()
   end
 
   return mainFrame
