@@ -18,13 +18,19 @@ function printRaidDkpResults()
   outputBoxEditBox:SetText(dkpStr)
 end
 
-local printRaidRosterButton = button.create(UIParent, "printRaidRoster", "Print Raid Roster", printRaidDkpResults, 150)
+local generateRaidDkpButton = button.create(UIParent, "generateRaidDkpButton", "Generate DKP", printRaidDkpResults, 120)
 
-function startAddon()
-  inputBox:Show()
-  outputBox:Show()
-  printRaidRosterButton:Show()
+function toggleAddon()
+  if generateRaidDkpButton:IsVisible() then
+    inputBox:Hide()
+    outputBox:Hide()
+    generateRaidDkpButton:Hide()
+  else
+    inputBox:Show()
+    outputBox:Show()
+    generateRaidDkpButton:Show()
+  end
 end
 
-local addonButton = button.create(UIParent, "addonButton", "Fallen Oath", startAddon)
+local addonButton = button.create(UIParent, "addonButton", "Fallen Oath", toggleAddon)
 addonButton:Show()

@@ -47,7 +47,7 @@ function editBox.create(editBoxParent, editBoxName, autoFocus, text)
     eb:SetMultiLine(true)
     eb:SetAutoFocus(autoFocus)
     eb:SetFontObject("ChatFontNormal")
-    eb:SetScript("OnEscapePressed", function() f:Hide() end)
+    -- eb:SetScript("OnEscapePressed", function() f:Hide() end)
     sf:SetScrollChild(eb)
     
     -- Resizable
