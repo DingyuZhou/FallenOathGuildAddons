@@ -33,13 +33,6 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
     f:SetPoint("CENTER")
     f:SetSize(1200, 700)
     
-    -- f:SetBackdrop({
-    --   bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    --   edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-    --   edgeSize = 16,
-    --   insets = { left = 8, right = 6, top = 8, bottom = 8 },
-    -- })
-    
     -- Movable
     f:SetMovable(true)
     f:SetClampedToScreen(true)
@@ -199,7 +192,7 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
     
     -- Resizable
     f:SetResizable(true)
-    f:SetMinResize(800, 400)
+    f:SetMinResize(800, 450)
     
     local resizeButtonName = mainFrameName .. "ResizeButton"
     local rb = CreateFrame("Button", resizeButtonName, f)
