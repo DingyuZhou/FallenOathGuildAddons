@@ -4,6 +4,7 @@ local util = namespace.util
 local raidRoster = namespace.raidRoster
 local button = namespace.button
 local editBox = namespace.editBox
+local raidDkpUi = namespace.raidDkpUi
 
 local sandbox = namespace.sandbox
 
@@ -20,17 +21,15 @@ end
 
 local generateRaidDkpButton = button.create(UIParent, "generateRaidDkpButton", "Generate DKP", printRaidDkpResults, { width = 120 })
 
+local newRaidDkpUi = raidDkpUi.create()
+
 function toggleAddon()
-  if generateRaidDkpButton:IsVisible() then
-    inputBox:Hide()
-    outputBox:Hide()
-    generateRaidDkpButton:Hide()
+  if newRaidDkpUi:IsVisible() then
+    newRaidDkpUi:Hide()
   else
-    inputBox:Show()
-    outputBox:Show()
-    generateRaidDkpButton:Show()
+    newRaidDkpUi:Show()
   end
 end
 
-local addonButton = button.create(UIParent, "addonButton", "Fallen Oath", toggleAddon)
+local addonButton = button.create(UIParent, "addonButton", "Fallen Oath", toggleAddon, { isMovable = true })
 addonButton:Show()

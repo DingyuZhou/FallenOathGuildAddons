@@ -3,7 +3,7 @@ local addonName, namespace = ...
 local editBox = {}
 
 function editBox.create(editBoxParent, editBoxName, editBoxConfig)
-  local mainFrameName = editBoxName .. "EditBoxFrame"
+  local mainFrameName = editBoxName .. "EditBoxMainFrame"
   local newEditBoxName = editBoxName .. 'EditBox'
   local mainFrame = _G[mainFrameName]
   local config = editBoxConfig or {}

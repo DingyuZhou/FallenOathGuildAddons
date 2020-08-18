@@ -2,7 +2,7 @@ local addonName, namespace = ...
 
 button = {}
 
-function button.create(buttonParent, buttonName, buttonText, buttonOnClick, buttonConfig)
+function button.create(buttonParent, buttonName, buttonText, buttonOnClickHandler, buttonConfig)
   local newButtonName = buttonName .. 'Button'
   local newButton = _G[newButtonName]
   local config = buttonConfig or {}
@@ -20,17 +20,19 @@ function button.create(buttonParent, buttonName, buttonText, buttonOnClick, butt
     b:SetSize(width, height)
     
     -- Movable
-    b:SetMovable(true)
-    b:SetClampedToScreen(true)
-    b:SetScript("OnMouseDown", function(self, button)
-      if button == "LeftButton" then
-        self:StartMoving()
-      end
-    end)
-    b:SetScript("OnMouseUp", b.StopMovingOrSizing)
+    if config.isMovable then
+      b:SetMovable(true)
+      b:SetClampedToScreen(true)
+      b:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" then
+          self:StartMoving()
+        end
+      end)
+      b:SetScript("OnMouseUp", b.StopMovingOrSizing)
+    end
 
     -- On Click
-    local onClickFn = buttonOnClick or function() return nil end
+    local onClickFn = buttonOnClickHandler or function() return nil end
     b:SetScript("OnClick", onClickFn)
   end
 

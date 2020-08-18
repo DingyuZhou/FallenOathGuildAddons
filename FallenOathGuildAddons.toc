@@ -9,7 +9,9 @@
 util.lua
 raid_roster.lua
 button.lua
+confirm_dialog.lua
 edit_box.lua
+raid_dkp_ui.lua
 sandbox.lua
 
 # Main file for the addon
