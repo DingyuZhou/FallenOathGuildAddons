@@ -107,7 +107,7 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
     dneb:SetAutoFocus(false)
     dneb:SetFontObject("ChatFontNormal")
     dneb:SetScript("OnEscapePressed", function() f:Hide() end)
-    dneb:SetText("集合分")
+    dneb:SetText("")
     dneb:SetSize(120, 20)
     dneb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -60)
     dneb:SetBackdrop({
@@ -158,6 +158,7 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
     -- DKP Generate Button
     local dkpGenerateHandler = function()
       local newMemberNames, dkpStr = raidRoster.generateRaidDkp(dneb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
+      dneb:SetText("")
       ib:SetText(newMemberNames)
       ob:SetText(dkpStr)
     end
