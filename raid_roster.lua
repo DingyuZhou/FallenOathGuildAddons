@@ -2,14 +2,28 @@ local addonName, namespace = ...
 
 local util = namespace.util
 
-local raidRoster = {}
+local RaidRoster = {}
+
+function RaidRoster:getSingletonInstance()
+  if not self.instance then
+    local newInstance = {}
+
+    -- Class syntax
+    self.__index = self
+    newInstance = setmetatable(newInstance, self)
+
+    self.instance = newInstance
+  end
+
+  return self.instance
+end
 
 -- persistent state: _G.RAID_MEMBER_NAME_ARRAY
-function raidRoster.persistentlySaveRaidMemberNameArray(raidMemberNameArray)
+function RaidRoster:persistentlySaveRaidMemberNameArray(raidMemberNameArray)
   _G.RAID_MEMBER_NAME_ARRAY = util.shallowCopy(raidMemberNameArray)
 end
 
-function raidRoster.getRaidMemberNameArray()
+function RaidRoster:getRaidMemberNameArray()
   if _G.RAID_MEMBER_NAME_ARRAY then
     return util.shallowCopy(_G.RAID_MEMBER_NAME_ARRAY)
   else
@@ -18,11 +32,11 @@ function raidRoster.getRaidMemberNameArray()
 end
 
 -- persistent state: _G.DKP_TYPE_ARRAY
-function raidRoster.persistentlySaveDkpTypeArray(dkpTypeArray)
+function RaidRoster:persistentlySaveDkpTypeArray(dkpTypeArray)
   _G.DKP_TYPE_ARRAY = util.shallowCopy(dkpTypeArray)
 end
 
-function raidRoster.getDkpTypeArray()
+function RaidRoster:getDkpTypeArray()
   if _G.DKP_TYPE_ARRAY then
     return util.shallowCopy(_G.DKP_TYPE_ARRAY)
   else
@@ -31,11 +45,11 @@ function raidRoster.getDkpTypeArray()
 end
 
 -- persistent state: _G.RAID_MEMBER_DKP_DETAIL_TABLE
-function raidRoster.persistentlySaveRaidMemberDkpDetailTable(raidMemberDkpDetailTable)
+function RaidRoster:persistentlySaveRaidMemberDkpDetailTable(raidMemberDkpDetailTable)
   _G.RAID_MEMBER_DKP_DETAIL_TABLE = util.shallowCopy(raidMemberDkpDetailTable)
 end
 
-function raidRoster.getRaidMemberDkpDetailTable()
+function RaidRoster:getRaidMemberDkpDetailTable()
   if _G.RAID_MEMBER_DKP_DETAIL_TABLE then
     return util.shallowCopy(_G.RAID_MEMBER_DKP_DETAIL_TABLE)
   else
@@ -43,14 +57,14 @@ function raidRoster.getRaidMemberDkpDetailTable()
   end
 end
 
-function raidRoster.clearAll()
-  raidRoster.persistentlySaveRaidMemberNameArray({})
-  raidRoster.persistentlySaveDkpTypeArray({})
-  raidRoster.persistentlySaveRaidMemberDkpDetailTable({})
+function RaidRoster:clearAll()
+  self:persistentlySaveRaidMemberNameArray({})
+  self:persistentlySaveDkpTypeArray({})
+  self:persistentlySaveRaidMemberDkpDetailTable({})
 end
 
-function raidRoster.isNewDkpType(newDkpType)
-  local dkpTypeArray = raidRoster.getDkpTypeArray()
+function RaidRoster:isNewDkpType(newDkpType)
+  local dkpTypeArray = self:getDkpTypeArray()
   local isNewDkpType = true
   for index = 1, #dkpTypeArray do
     if dkpTypeArray[index] == newDkpType then
@@ -61,28 +75,28 @@ function raidRoster.isNewDkpType(newDkpType)
   return isNewDkpType
 end
 
-function raidRoster.insertDkpType(newDkpType)
-  local dkpTypeArray = raidRoster.getDkpTypeArray()
-  if raidRoster.isNewDkpType(newDkpType) then
+function RaidRoster:insertDkpType(newDkpType)
+  local dkpTypeArray = self:getDkpTypeArray()
+  if self:isNewDkpType(newDkpType) then
     table.insert(dkpTypeArray, newDkpType)
   end
-  raidRoster.persistentlySaveDkpTypeArray(dkpTypeArray)
+  self:persistentlySaveDkpTypeArray(dkpTypeArray)
   return dkpTypeArray
 end
 
-function raidRoster.removeDkpType(dkpTypeToRemove)
-  local dkpTypeArray = raidRoster.getDkpTypeArray()
+function RaidRoster:removeDkpType(dkpTypeToRemove)
+  local dkpTypeArray = self:getDkpTypeArray()
   local newDkpTypeArray = {}
   for index = 1, #dkpTypeArray do
     if dkpTypeArray[index] ~= dkpTypeToRemove then
       table.insert(newDkpTypeArray, dkpTypeArray[index])
     end
   end
-  raidRoster.persistentlySaveDkpTypeArray(newDkpTypeArray)
+  self:persistentlySaveDkpTypeArray(newDkpTypeArray)
   return newDkpTypeArray
 end
 
-function raidRoster.getRaidRoster()
+function RaidRoster:getRaidRoster()
   local roster = {}
   local memberCount = GetNumGroupMembers();
   for i = 1, memberCount do
@@ -94,8 +108,8 @@ function raidRoster.getRaidRoster()
   return roster
 end
 
-function raidRoster.areRaidMemberNamesSameAsPersistentlySavedOnes(raidMemberNameListString)
-  local savedRaidMemberNameArray = raidRoster.getRaidMemberNameArray()
+function RaidRoster:areRaidMemberNamesSameAsPersistentlySavedOnes(raidMemberNameListString)
+  local savedRaidMemberNameArray = self:getRaidMemberNameArray()
   if #savedRaidMemberNameArray == 0 then
     return false
   end
@@ -111,10 +125,10 @@ function raidRoster.areRaidMemberNamesSameAsPersistentlySavedOnes(raidMemberName
   return false
 end
 
-function raidRoster.getMemberNameListStringAndDkpStringFromGlobalState()
-  local dkpTypeArray = raidRoster.getDkpTypeArray()
-  local raidMemberNameArray = raidRoster.getRaidMemberNameArray()
-  local raidMemberDkpDetailTable = raidRoster.getRaidMemberDkpDetailTable()
+function RaidRoster:getMemberNameListStringAndDkpStringFromGlobalState()
+  local dkpTypeArray = self:getDkpTypeArray()
+  local raidMemberNameArray = self:getRaidMemberNameArray()
+  local raidMemberDkpDetailTable = self:getRaidMemberDkpDetailTable()
 
   if #raidMemberNameArray == 0 or #dkpTypeArray == 0 then
     return "", ""
@@ -148,11 +162,11 @@ function raidRoster.getMemberNameListStringAndDkpStringFromGlobalState()
   return memberNameListStr, dkpStr
 end
 
-function raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(newDkpType, raidMemberNameListString, onlineMemberPoints, offlineMemberPoints)
+function RaidRoster:generateRaidDkpDetailsAfterAddOneDkpType(newDkpType, raidMemberNameListString, onlineMemberPoints, offlineMemberPoints)
   -- Validations
 
   -- If there is a saved raidMemberNameArray, then always use it to generate raid DKP details to avoid accidentally change in the raid member name input box.
-  local raidMemberNameArray = raidRoster.getRaidMemberNameArray()
+  local raidMemberNameArray = self:getRaidMemberNameArray()
   if #raidMemberNameArray == 0 then
     raidMemberNameArray = util.splitString(raidMemberNameListString)
     if #raidMemberNameArray == 0 then
@@ -173,8 +187,8 @@ function raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(newDkpType, raidMem
     return "", "Warning: please input valid offline raid member points first, and then try it again."
   end
 
-  local roster = raidRoster.getRaidRoster()
-  local raidMemberDkpDetailTable = raidRoster.getRaidMemberDkpDetailTable()
+  local roster = self:getRaidRoster()
+  local raidMemberDkpDetailTable = self:getRaidMemberDkpDetailTable()
   local newRaidMemberDkpDetailTable = {}
 
   for index = 1, #raidMemberNameArray do
@@ -215,30 +229,30 @@ function raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(newDkpType, raidMem
     end
   end
 
-  raidRoster.insertDkpType(trimmedNewDkpType)
+  self:insertDkpType(trimmedNewDkpType)
 
   -- RaidMemberNameArray and RaidMemberDkpDetailTable should have exactly same raid members
-  raidRoster.persistentlySaveRaidMemberNameArray(raidMemberNameArray)
-  raidRoster.persistentlySaveRaidMemberDkpDetailTable(newRaidMemberDkpDetailTable)
+  self:persistentlySaveRaidMemberNameArray(raidMemberNameArray)
+  self:persistentlySaveRaidMemberDkpDetailTable(newRaidMemberDkpDetailTable)
 
-  local memberNameListStr, dkpStr = raidRoster.getMemberNameListStringAndDkpStringFromGlobalState()
+  local memberNameListStr, dkpStr = self:getMemberNameListStringAndDkpStringFromGlobalState()
   return memberNameListStr, dkpStr
 end
 
-function raidRoster.generateRaidDkpDetailsAfterRemoveOneDkpType(dkpTypeToRemove)
+function RaidRoster:generateRaidDkpDetailsAfterRemoveOneDkpType(dkpTypeToRemove)
   -- Validations
   local trimmedDkpTypeToRemove = util.trimString(dkpTypeToRemove)
   if trimmedDkpTypeToRemove == '' then
     return "", "Warning: please input valid DKP type first, and then try it again."
   end
 
-  local newDkpTypeArray = raidRoster.removeDkpType(trimmedDkpTypeToRemove)
+  local newDkpTypeArray = self:removeDkpType(trimmedDkpTypeToRemove)
   if #newDkpTypeArray == 0 then
-    raidRoster.clearAll()
+    self:clearAll()
   end
 
-  local memberNameListStr, dkpStr = raidRoster.getMemberNameListStringAndDkpStringFromGlobalState()
+  local memberNameListStr, dkpStr = self:getMemberNameListStringAndDkpStringFromGlobalState()
   return memberNameListStr, dkpStr
 end
 
-namespace.raidRoster = raidRoster
+namespace.RaidRoster = RaidRoster

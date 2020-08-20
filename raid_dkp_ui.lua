@@ -4,7 +4,7 @@ local util = namespace.util
 local Button = namespace.Button
 local MessageDialog = namespace.MessageDialog
 local ConfirmDialog = namespace.ConfirmDialog
-local raidRoster = namespace.raidRoster
+local RaidRoster = namespace.RaidRoster
 
 local RaidDkpUi = {}
 
@@ -12,6 +12,7 @@ local RaidDkpUi = {}
 function RaidDkpUi:getSingletonInstance()
   if not self.instance then
     local newInstance = {}
+    newInstance.raidRoster = RaidRoster:getSingletonInstance()
 
     -- Class syntax
     self.__index = self
@@ -164,7 +165,7 @@ function RaidDkpUi:getSingletonInstance()
 
     -- DKP Generate Button
     local dkpGenerateHandler = function()
-      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(dteb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
+      local newRaidMemberNames, dkpStr = newInstance.raidRoster:generateRaidDkpDetailsAfterAddOneDkpType(dteb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
       if newRaidMemberNames == "" then
         if dkpStr ~= "" then
           -- has some warnings
@@ -186,11 +187,11 @@ function RaidDkpUi:getSingletonInstance()
     local dkpGenerateConfirmDialog = ConfirmDialog:new(dkpGenerateConfirmDialogName, dkpGenerateHandler, { text = "Ready to generate the DKP?" })
     local onClickDkpGenerateButton = function()
       local warningMessage = ""
-      if raidRoster.areRaidMemberNamesSameAsPersistentlySavedOnes(ib:GetText()) then
+      if newInstance.raidRoster:areRaidMemberNamesSameAsPersistentlySavedOnes(ib:GetText()) then
         warningMessage = warningMessage .. "Warning! Detected that the input raid member names are different than saved ones.\n\nIf it is an accidentally change, please ignore this warning, and click 'Yes' in the following confirm dialog to generate DKP by using saved raid member names.\n\nOtherwise, please click 'No' in the following confirm dialog, and 'Clear All DKP' first before try it again."
       end
       local trimmedNewDkpType = util.trimString(dteb:GetText())
-      if not raidRoster.isNewDkpType(trimmedNewDkpType) then
+      if not newInstance.raidRoster:isNewDkpType(trimmedNewDkpType) then
         if warningMessage ~= "" then
           warningMessage = warningMessage .. "\n\n----------\n\n"
         end
@@ -212,7 +213,7 @@ function RaidDkpUi:getSingletonInstance()
 
     -- Remove DKP Type Button
     local dkpTypeRemoveHandler = function()
-      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterRemoveOneDkpType(dteb:GetText())
+      local newRaidMemberNames, dkpStr = newInstance.raidRoster:generateRaidDkpDetailsAfterRemoveOneDkpType(dteb:GetText())
       if newRaidMemberNames == "" then
         -- has some warnings
         if dkpStr ~= "" then
@@ -234,7 +235,7 @@ function RaidDkpUi:getSingletonInstance()
     end
     local removeDkpTypeConfirmDialog = ConfirmDialog:new(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
     local onClickRemoveDkpTypeButton = function()
-      if raidRoster.areRaidMemberNamesSameAsPersistentlySavedOnes(ib:GetText()) then
+      if newInstance.raidRoster:areRaidMemberNamesSameAsPersistentlySavedOnes(ib:GetText()) then
         local msgDialog = MessageDialog:new(
           raidDkpUiName .. "DkpTypeRemoveWarningMessageDialog",
           "Warning! Detected that the input raid member names are different than saved ones.\n\nIf it is an accidentally change, please ignore this warning, and click 'Yes' in the following confirm dialog to remove the DKP type by using saved raid member names.\n\nOtherwise, please click 'No' in the following confirm dialog, and 'Clear All DKP' first before try it again.",
@@ -250,7 +251,7 @@ function RaidDkpUi:getSingletonInstance()
 
     -- Clear All DKP Button
     local clearAllDkpHandler = function()
-      raidRoster.clearAll()
+      newInstance.raidRoster:clearAll()
       ob:SetText("")
     end
     local clearAllDkpConfirmDialog = ConfirmDialog:new(clearAllDkpConfirmDialogName, clearAllDkpHandler, { text = "Are you sure to clear all DKP data?" })
@@ -321,7 +322,7 @@ function RaidDkpUi:hide()
 end
 
 function RaidDkpUi:loadAndDisplayPersistentlySavedData()
-  local memberNameListStr, dkpStr = raidRoster.getMemberNameListStringAndDkpStringFromGlobalState()
+  local memberNameListStr, dkpStr = self.raidRoster:getMemberNameListStringAndDkpStringFromGlobalState()
   self:setInputBoxText(memberNameListStr)
   self:setOutputBoxText(dkpStr)
 end
