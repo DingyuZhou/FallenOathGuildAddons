@@ -2,7 +2,7 @@
 ## Title: Fallen Oath Guild Addons
 ## Notes: Fallen Oath Guild Addons
 ## Author: Fallen Oath Guild Members
-## Version: 1.0
+## Version: 1.1.0
 ## SavedVariablesPerCharacter: RAID_MEMBER_NAME_ARRAY, DKP_TYPE_ARRAY, RAID_MEMBER_DKP_DETAIL_TABLE
 
 # Module order matters
