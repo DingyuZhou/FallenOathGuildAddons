@@ -5,7 +5,7 @@ local raidDkpUi = namespace.raidDkpUi
 -- local sandbox = namespace.sandbox
 -- sandbox.sayHelloWorld()
 
-local newRaidDkpUi = raidDkpUi.create()
+local newRaidDkpUi = raidDkpUi:create()
 
 function toggleAddon()
   if newRaidDkpUi:IsVisible() then
@@ -15,5 +15,5 @@ function toggleAddon()
   end
 end
 
-local addonButton = button.create(UIParent, "addonButton", "Fallen Oath", toggleAddon, { isMovable = true })
+local addonButton = button:create(UIParent, "addonButton", "Fallen Oath", toggleAddon, { isMovable = true })
 addonButton:Show()

@@ -2,7 +2,7 @@ local addonName, namespace = ...
 
 button = {}
 
-function button.create(buttonParent, buttonName, buttonText, buttonOnClickHandler, buttonConfig)
+function button:create(buttonParent, buttonName, buttonText, buttonOnClickHandler, buttonConfig)
   local newButtonName = buttonName .. 'Button'
   local newButton = _G[newButtonName]
   local config = buttonConfig or {}
@@ -18,7 +18,7 @@ function button.create(buttonParent, buttonName, buttonText, buttonOnClickHandle
     local width = config.width or 100
     local height = config.height or 30
     b:SetSize(width, height)
-    
+
     -- Movable
     if config.isMovable then
       b:SetMovable(true)
@@ -41,7 +41,7 @@ function button.create(buttonParent, buttonName, buttonText, buttonOnClickHandle
   else
     newButton:Hide()
   end
-  
+
   return newButton
 end
 

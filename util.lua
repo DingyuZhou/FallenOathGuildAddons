@@ -2,6 +2,20 @@ local addonName, namespace = ...
 
 local util = {}
 
+function util.shallowCopy(original)
+  local original_type = type(original)
+  local copy
+  if original_type == 'table' then
+    copy = {}
+    for original_key, original_value in pairs(original) do
+      copy[original_key] = original_value
+    end
+  else -- number, string, boolean, etc
+    copy = original
+  end
+  return copy
+end
+
 function util.toString(o)
   if type(o) == 'table' then
     local s = '{ '

@@ -2,7 +2,7 @@ local addonName, namespace = ...
 
 confirmDialog = {}
 
-function confirmDialog.create(confirmDialogName, onAcceptHandler, confirmDialogConfig)
+function confirmDialog:create(confirmDialogName, onAcceptHandler, confirmDialogConfig)
   local globalPromptDialogName = confirmDialogName .. "ConfirmDialog"
   local config = confirmDialogConfig or {}
 

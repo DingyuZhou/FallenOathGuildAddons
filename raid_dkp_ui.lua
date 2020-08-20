@@ -6,7 +6,7 @@ local raidRoster = namespace.raidRoster
 
 local raidDkpUi = {}
 
-function raidDkpUi.create(dkpTypeRemoveHandler)
+function raidDkpUi:create(dkpTypeRemoveHandler)
   local raidDkpUiName = "RaidDkpUi"
   local mainFrameName = raidDkpUiName .. "MainFrame"
   local inputBoxName = raidDkpUiName .. "InputBox"
@@ -32,7 +32,7 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
 
     f:SetPoint("CENTER")
     f:SetSize(1200, 700)
-    
+
     -- Movable
     f:SetMovable(true)
     f:SetClampedToScreen(true)
@@ -48,7 +48,7 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
       insets = { left = 0, right = 0, top = 0, bottom = 0 }
     })
     f:SetBackdropColor(1, 1, 1, 0.3)
-    
+
     -- Input Box ScrollFrame
     local inputBoxScrollFrameName = inputBoxName .. "ScrollFrame"
     local ibsf = CreateFrame("ScrollFrame", inputBoxScrollFrameName, f, "UIPanelScrollFrameTemplate")
@@ -65,7 +65,7 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
     local inputBoxHintText = f:CreateFontString(f, "OVERLAY", "GameTooltipText")
     inputBoxHintText:SetPoint("TOPLEFT", ibsf, "TOPLEFT", -8, 25)
     inputBoxHintText:SetText("Raid Member Names")
-    
+
     -- Input Box
     local ib = CreateFrame("EditBox", inputBoxName, ibsf)
     ib:SetSize(ibsf:GetSize())
@@ -91,7 +91,7 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
     local outputBoxHintText = f:CreateFontString(f, "OVERLAY", "GameTooltipText")
     outputBoxHintText:SetPoint("TOPLEFT", obsf, "TOPLEFT", -8, 25)
     outputBoxHintText:SetText("Raid Member DKP Output")
-    
+
     -- Output Box
     local ob = CreateFrame("EditBox", outputBoxName, obsf)
     ob:SetSize(obsf:GetSize())
@@ -157,53 +157,53 @@ function raidDkpUi.create(dkpTypeRemoveHandler)
 
     -- DKP Generate Button
     local dkpGenerateHandler = function()
-      local newMemberNames, dkpStr = raidRoster.generateRaidDkp(dneb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
+      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(dneb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
       dneb:SetText("")
-      ib:SetText(newMemberNames)
+      ib:SetText(newRaidMemberNames)
       ob:SetText(dkpStr)
     end
-    local dkpGenerateConfirmDialog = confirmDialog.create(dkpGenerateConfirmDialogName, dkpGenerateHandler, { text = "Ready to generate the DKP?" })
-    local dkpGenerateButton = button.create(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    local dkpGenerateConfirmDialog = confirmDialog:create(dkpGenerateConfirmDialogName, dkpGenerateHandler, { text = "Ready to generate the DKP?" })
+    local dkpGenerateButton = button:create(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
     dkpGenerateButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -260)
 
     -- Remove DKP Type Button
     local dkpTypeRemoveHandler = function()
-      local newMemberNames, dkpStr = raidRoster.removeRaidDkpType(dneb:GetText())
-      if newMemberNames ~= '' then
-        ib:SetText(newMemberNames)
+      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterRemoveOneDkpType(dneb:GetText())
+      if newRaidMemberNames ~= '' then
+        ib:SetText(newRaidMemberNames)
       end
       ob:SetText(dkpStr)
     end
-    local removeDkpTypeConfirmDialog = confirmDialog.create(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
-    local removeDkpTypeButton = button.create(f, removeDkpTypeButtonName, "Remove DKP Type", removeDkpTypeConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    local removeDkpTypeConfirmDialog = confirmDialog:create(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
+    local removeDkpTypeButton = button:create(f, removeDkpTypeButtonName, "Remove DKP Type", removeDkpTypeConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
     removeDkpTypeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -300)
 
     -- Clear All DKP Button
     local clearAllDkpHandler = function()
-      raidRoster.resetAll()
+      raidRoster.clearAll()
       ob:SetText("")
     end
-    local clearAllDkpConfirmDialog = confirmDialog.create(clearAllDkpConfirmDialogName, clearAllDkpHandler, { text = "Are you sure to clear all DKP data?" })
-    local clearAllDkpButton = button.create(f, clearAllDkpButtonName, "Clear All DKP", clearAllDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    local clearAllDkpConfirmDialog = confirmDialog:create(clearAllDkpConfirmDialogName, clearAllDkpHandler, { text = "Are you sure to clear all DKP data?" })
+    local clearAllDkpButton = button:create(f, clearAllDkpButtonName, "Clear All DKP", clearAllDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
     clearAllDkpButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -340)
 
     -- Close Button
-    local closeButton = button.create(f, closeButtonName, "Close", function() f:Hide() end, { isVisible = true, width = 130 })
+    local closeButton = button:create(f, closeButtonName, "Close", function() f:Hide() end, { isVisible = true, width = 130 })
     closeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -380)
-    
+
     -- Resizable
     f:SetResizable(true)
     f:SetMinResize(800, 450)
-    
+
     local resizeButtonName = mainFrameName .. "ResizeButton"
     local rb = CreateFrame("Button", resizeButtonName, f)
     rb:SetPoint("BOTTOMRIGHT", -6, 7)
     rb:SetSize(16, 16)
-    
+
     rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
     rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
     rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
-    
+
     rb:SetScript("OnMouseDown", function(self, button)
       if button == "LeftButton" then
         f:StartSizing("BOTTOMRIGHT")
