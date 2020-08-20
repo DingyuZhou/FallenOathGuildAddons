@@ -1,48 +1,109 @@
 local addonName, namespace = ...
 
-button = {}
+local util = namespace.util
 
-function button:create(buttonParent, buttonName, buttonText, buttonOnClickHandler, buttonConfig)
-  local newButtonName = buttonName .. 'Button'
-  local newButton = _G[newButtonName]
+Button = {}
+
+function Button:new(buttonParent, buttonName, buttonText, buttonOnClickHandler, buttonConfig)
+  local newInstance = {}
+  newInstance.parent = buttonParent
+  newInstance.name = util.generateGlobalValidUiName(buttonName)
+  local b = CreateFrame("Button", newInstance.name, newInstance.parent, "UIPanelButtonTemplate")
+  newInstance.button = b
+
+  self.__index = self
+  newInstance = setmetatable(newInstance, self)
+
   local config = buttonConfig or {}
+  newInstance:setText(buttonText)
+  newInstance:setSize(config.width, config.height)
+  newInstance:setPoint("CENTER")
 
-  if not newButton then
-    local b = CreateFrame("Button", newButtonName, buttonParent, "UIPanelButtonTemplate")
-    newButton = b
+  -- Movable
+  newInstance:setMovable(config.isMovable)
 
-    b:SetText(buttonText)
+  -- On Click
+  newInstance:setOnClickHandler(buttonOnClickHandler)
 
-    b:SetPoint("CENTER")
+  if config.isVisible then
+    newInstance:show()
+  else
+    newInstance:hide()
+  end
 
-    local width = config.width or 100
-    local height = config.height or 30
-    b:SetSize(width, height)
+  return newInstance
+end
 
-    -- Movable
-    if config.isMovable then
-      b:SetMovable(true)
-      b:SetClampedToScreen(true)
-      b:SetScript("OnMouseDown", function(self, button)
+function Button:setText(buttonText)
+  if self.button then
+    local text = buttonText or "Button"
+    self.text = text
+    self.button:SetText(buttonText)
+  end
+  self.text = ""
+end
+
+function Button:setOnClickHandler(buttonOnClickHandler)
+  if self.button then
+    local onClickHandler = buttonOnClickHandler or function() return nil end
+    b:SetScript("OnClick", onClickHandler)
+  end
+end
+
+function Button:setPoint(...)
+  if self.button then
+    self.button:SetPoint(...)
+  end
+end
+
+function Button:setSize(buttonWidth, buttonHeight)
+  if self.button then
+    local width = buttonWidth or 100
+    local height = buttonHeight or 30
+    self.width = width
+    self.height = height
+    self.button:SetSize(width, height)
+  end
+  self.width = 0
+  self.height = 0
+end
+
+function Button:setMovable(isMovable)
+  if self.button then
+    if isMovable then
+      self.isMovable = true
+      self.button:SetMovable(true)
+      self.button:SetClampedToScreen(true)
+      self.button:SetScript("OnMouseDown", function(self, button)
         if button == "LeftButton" then
           self:StartMoving()
         end
       end)
-      b:SetScript("OnMouseUp", b.StopMovingOrSizing)
+      self.button:SetScript("OnMouseUp", b.StopMovingOrSizing)
+    else
+      self.isMovable = false
+      self.button:SetMovable(false)
+      self.button:SetClampedToScreen(true)
+      self.button:SetScript("OnMouseDown", nil)
+      self.button:SetScript("OnMouseUp", nil)
     end
-
-    -- On Click
-    local onClickFn = buttonOnClickHandler or function() return nil end
-    b:SetScript("OnClick", onClickFn)
   end
-
-  if config.isVisible then
-    newButton:Show()
-  else
-    newButton:Hide()
-  end
-
-  return newButton
+  self.isMovable = false
 end
 
-namespace.button = button
+function Button:show()
+  if self.button then
+    self.button:Show()
+    self.isVisible = true
+  end
+  self.isVisible = false
+end
+
+function Button:hide()
+  if self.button then
+    self.button:Hide()
+  end
+  self.isVisible = false
+end
+
+namespace.Button = Button

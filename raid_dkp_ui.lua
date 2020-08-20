@@ -1,6 +1,6 @@
 local addonName, namespace = ...
 
-local button = namespace.button
+local Button = namespace.Button
 local confirmDialog = namespace.confirmDialog
 local raidRoster = namespace.raidRoster
 
@@ -163,8 +163,8 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
       ob:SetText(dkpStr)
     end
     local dkpGenerateConfirmDialog = confirmDialog:create(dkpGenerateConfirmDialogName, dkpGenerateHandler, { text = "Ready to generate the DKP?" })
-    local dkpGenerateButton = button:create(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
-    dkpGenerateButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -260)
+    local dkpGenerateButton = Button.new(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    dkpGenerateButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -260)
 
     -- Remove DKP Type Button
     local dkpTypeRemoveHandler = function()
@@ -175,8 +175,8 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
       ob:SetText(dkpStr)
     end
     local removeDkpTypeConfirmDialog = confirmDialog:create(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
-    local removeDkpTypeButton = button:create(f, removeDkpTypeButtonName, "Remove DKP Type", removeDkpTypeConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
-    removeDkpTypeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -300)
+    local removeDkpTypeButton = Button.new(f, removeDkpTypeButtonName, "Remove DKP Type", removeDkpTypeConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    removeDkpTypeButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -300)
 
     -- Clear All DKP Button
     local clearAllDkpHandler = function()
@@ -184,12 +184,12 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
       ob:SetText("")
     end
     local clearAllDkpConfirmDialog = confirmDialog:create(clearAllDkpConfirmDialogName, clearAllDkpHandler, { text = "Are you sure to clear all DKP data?" })
-    local clearAllDkpButton = button:create(f, clearAllDkpButtonName, "Clear All DKP", clearAllDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
-    clearAllDkpButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -340)
+    local clearAllDkpButton = Button.new(f, clearAllDkpButtonName, "Clear All DKP", clearAllDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    clearAllDkpButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -340)
 
     -- Close Button
-    local closeButton = button:create(f, closeButtonName, "Close", function() f:Hide() end, { isVisible = true, width = 130 })
-    closeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -380)
+    local closeButton = Button.new(f, closeButtonName, "Close", function() f:Hide() end, { isVisible = true, width = 130 })
+    closeButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -380)
 
     -- Resizable
     f:SetResizable(true)

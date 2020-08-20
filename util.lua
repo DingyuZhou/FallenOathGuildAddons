@@ -2,6 +2,14 @@ local addonName, namespace = ...
 
 local util = {}
 
+function generateGlobalValidUiName(seedUiName)
+  local validUiName = seedUiName
+  while _G[validUiName] do
+    validUiName = validUiName .. math.random(0, 9)
+  end
+  return validUiName
+end
+
 function util.shallowCopy(original)
   local original_type = type(original)
   local copy

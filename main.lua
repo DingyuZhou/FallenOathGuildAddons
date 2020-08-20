@@ -1,5 +1,6 @@
 local addonName, namespace = ...
 
+local Button = namespace.Button
 local raidDkpUi = namespace.raidDkpUi
 
 -- local sandbox = namespace.sandbox
@@ -15,5 +16,5 @@ function toggleAddon()
   end
 end
 
-local addonButton = button:create(UIParent, "addonButton", "Fallen Oath", toggleAddon, { isMovable = true })
-addonButton:Show()
+local addonButton = Button:new(UIParent, "addonButton", "Fallen Oath", toggleAddon, { isMovable = true })
+addonButton:show()
