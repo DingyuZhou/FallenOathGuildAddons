@@ -158,24 +158,41 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
     -- DKP Generate Button
     local dkpGenerateHandler = function()
       local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(dneb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
-      dneb:SetText("")
-      ib:SetText(newRaidMemberNames)
-      ob:SetText(dkpStr)
+      if newRaidMemberNames == "" then
+        if dkpStr ~= "" then
+          -- has some warnings
+          message(dkpStr)
+        else
+          ob:SetText("")
+        end
+      else
+        dneb:SetText("")
+        ib:SetText(newRaidMemberNames)
+        ob:SetText(dkpStr)
+      end
     end
     local dkpGenerateConfirmDialog = confirmDialog:create(dkpGenerateConfirmDialogName, dkpGenerateHandler, { text = "Ready to generate the DKP?" })
-    local dkpGenerateButton = Button.new(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    local dkpGenerateButton = Button:new(f, dkpGenerateButtonName, "Generate DKP", dkpGenerateConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
     dkpGenerateButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -260)
 
     -- Remove DKP Type Button
     local dkpTypeRemoveHandler = function()
       local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterRemoveOneDkpType(dneb:GetText())
-      if newRaidMemberNames ~= '' then
+      if newRaidMemberNames == "" then
+        -- has some warnings
+        if dkpStr ~= "" then
+          -- has some warnings
+          message(dkpStr)
+        else
+          ob:SetText("")
+        end
+      else
         ib:SetText(newRaidMemberNames)
+        ob:SetText(dkpStr)
       end
-      ob:SetText(dkpStr)
     end
     local removeDkpTypeConfirmDialog = confirmDialog:create(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
-    local removeDkpTypeButton = Button.new(f, removeDkpTypeButtonName, "Remove DKP Type", removeDkpTypeConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    local removeDkpTypeButton = Button:new(f, removeDkpTypeButtonName, "Remove DKP Type", removeDkpTypeConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
     removeDkpTypeButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -300)
 
     -- Clear All DKP Button
@@ -184,11 +201,11 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
       ob:SetText("")
     end
     local clearAllDkpConfirmDialog = confirmDialog:create(clearAllDkpConfirmDialogName, clearAllDkpHandler, { text = "Are you sure to clear all DKP data?" })
-    local clearAllDkpButton = Button.new(f, clearAllDkpButtonName, "Clear All DKP", clearAllDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    local clearAllDkpButton = Button:new(f, clearAllDkpButtonName, "Clear All DKP", clearAllDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
     clearAllDkpButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -340)
 
     -- Close Button
-    local closeButton = Button.new(f, closeButtonName, "Close", function() f:Hide() end, { isVisible = true, width = 130 })
+    local closeButton = Button:new(f, closeButtonName, "Close", function() f:Hide() end, { isVisible = true, width = 130 })
     closeButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -380)
 
     -- Resizable

@@ -8,8 +8,7 @@ function Button:new(buttonParent, buttonName, buttonText, buttonOnClickHandler, 
   local newInstance = {}
   newInstance.parent = buttonParent
   newInstance.name = util.generateGlobalValidUiName(buttonName)
-  local b = CreateFrame("Button", newInstance.name, newInstance.parent, "UIPanelButtonTemplate")
-  newInstance.button = b
+  newInstance.button = CreateFrame("Button", newInstance.name, newInstance.parent, "UIPanelButtonTemplate")
 
   self.__index = self
   newInstance = setmetatable(newInstance, self)
@@ -46,7 +45,7 @@ end
 function Button:setOnClickHandler(buttonOnClickHandler)
   if self.button then
     local onClickHandler = buttonOnClickHandler or function() return nil end
-    b:SetScript("OnClick", onClickHandler)
+    self.button:SetScript("OnClick", onClickHandler)
   end
 end
 
@@ -79,7 +78,7 @@ function Button:setMovable(isMovable)
           self:StartMoving()
         end
       end)
-      self.button:SetScript("OnMouseUp", b.StopMovingOrSizing)
+      self.button:SetScript("OnMouseUp", self.button.StopMovingOrSizing)
     else
       self.isMovable = false
       self.button:SetMovable(false)

@@ -208,6 +208,8 @@ function raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(newDkpType, raidMem
   end
 
   raidRoster.insertDkpType(trimmedNewDkpType)
+
+  -- RaidMemberNameArray and RaidMemberDkpDetailTable should have exactly same raid members
   raidRoster.persistentlySaveRaidMemberNameArray(raidMemberNameArray)
   raidRoster.persistentlySaveRaidMemberDkpDetailTable(newRaidMemberDkpDetailTable)
 

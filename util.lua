@@ -2,7 +2,7 @@ local addonName, namespace = ...
 
 local util = {}
 
-function generateGlobalValidUiName(seedUiName)
+function util.generateGlobalValidUiName(seedUiName)
   local validUiName = seedUiName
   while _G[validUiName] do
     validUiName = validUiName .. math.random(0, 9)
