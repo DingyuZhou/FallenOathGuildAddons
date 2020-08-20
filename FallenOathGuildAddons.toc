@@ -10,6 +10,7 @@
 util.lua
 raid_roster.lua
 button.lua
+message_dialog.lua
 confirm_dialog.lua
 edit_box.lua
 raid_dkp_ui.lua

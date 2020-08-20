@@ -91,6 +91,9 @@ end
 
 function raidRoster.areRaidMemberNamesSameAsPersistentlySavedOnes(raidMemberNameListString)
   local savedRaidMemberNameArray = raidRoster.getRaidMemberNameArray()
+  if #savedRaidMemberNameArray == 0 then
+    return false
+  end
   local raidMemberNameArray = util.splitString(raidMemberNameListString)
   if #savedRaidMemberNameArray ~= #raidMemberNameArray then
     return true

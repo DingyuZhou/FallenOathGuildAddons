@@ -10,6 +10,7 @@ function Button:new(buttonParent, buttonName, buttonText, buttonOnClickHandler, 
   newInstance.name = util.generateGlobalValidUiName(buttonName)
   newInstance.button = CreateFrame("Button", newInstance.name, newInstance.parent, "UIPanelButtonTemplate")
 
+  -- Class syntax
   self.__index = self
   newInstance = setmetatable(newInstance, self)
 
