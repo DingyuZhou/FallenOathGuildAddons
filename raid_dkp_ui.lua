@@ -8,7 +8,7 @@ local RaidRoster = namespace.RaidRoster
 
 local RaidDkpUi = {}
 
--- Need better refactoring
+-- TODO: need better refactoring
 function RaidDkpUi:getSingletonInstance()
   if not self.instance then
     local newInstance = {}
@@ -18,9 +18,9 @@ function RaidDkpUi:getSingletonInstance()
     self.__index = self
     newInstance = setmetatable(newInstance, self)
 
-    local raidDkpUiName = "RaidDkpUi"
-    newInstance.mainFrameName = util.generateGlobalValidUiName(raidDkpUiName .. "MainFrame")
-
+    newInstance.name = util.generateGlobalValidUiName("RaidDkpUi")
+    local raidDkpUiName = newInstance.name
+    local mainFrameName = raidDkpUiName .. "MainFrame"
     local inputBoxName = raidDkpUiName .. "InputBox"
     local outputBoxName = raidDkpUiName .. "OutputBox"
     local dkpTypeEditBoxName = raidDkpUiName .. "DkpTypeEditBox"
@@ -34,7 +34,7 @@ function RaidDkpUi:getSingletonInstance()
     local clearAllDkpConfirmDialogName = raidDkpUiName .. "ClearAllDkpConfirmDialog"
     local closeButtonName = raidDkpUiName .. "CloseButton"
 
-    local f = CreateFrame("Frame", newInstance.mainFrameName, UIParent)
+    local f = CreateFrame("Frame", mainFrameName, UIParent)
     mainFrame = f
     mainFrame:Hide()
 
@@ -266,7 +266,7 @@ function RaidDkpUi:getSingletonInstance()
     f:SetResizable(true)
     f:SetMinResize(800, 450)
 
-    local resizeButtonName = newInstance.mainFrameName .. "ResizeButton"
+    local resizeButtonName = raidDkpUiName .. "ResizeButton"
     local rb = CreateFrame("Button", resizeButtonName, f)
     rb:SetPoint("BOTTOMRIGHT", -6, 7)
     rb:SetSize(16, 16)

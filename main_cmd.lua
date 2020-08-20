@@ -1,3 +1,5 @@
+-- TODO: this file hasn't been used in the addon.
+
 FOAddon = {};
 FOAddon.fully_loaded = false;
 
