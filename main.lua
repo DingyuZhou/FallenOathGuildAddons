@@ -1,20 +1,31 @@
 local addonName, namespace = ...
 
 local Button = namespace.Button
-local raidDkpUi = namespace.raidDkpUi
+local RaidDkpUi = namespace.RaidDkpUi
 
 -- local sandbox = namespace.sandbox
 -- sandbox.sayHelloWorld()
 
-local newRaidDkpUi = raidDkpUi:create()
+local addonButton = Button:new(UIParent, "addonButton", "Fallen Oath", nil, { isMovable = true })
 
-function toggleAddon()
-  if newRaidDkpUi:IsVisible() then
-    newRaidDkpUi:Hide()
-  else
-    newRaidDkpUi:Show()
+addonButton:registerEvent("ADDON_LOADED")
+addonButton:setScript(
+  "OnEvent",
+  function(self, eventName, addonName)
+    if eventName == "ADDON_LOADED" and addonName == "FallenOathGuildAddons" then
+      local raidDkpUiSingletonInstance = RaidDkpUi:getSingletonInstance()
+
+      addonButton:setOnClickHandler(
+        function()
+          if raidDkpUiSingletonInstance:isVisible() then
+            raidDkpUiSingletonInstance:hide()
+          else
+            raidDkpUiSingletonInstance:show()
+          end
+        end
+      )
+
+      addonButton:show()
+    end
   end
-end
-
-local addonButton = Button:new(UIParent, "addonButton", "Fallen Oath", toggleAddon, { isMovable = true })
-addonButton:show()
+)

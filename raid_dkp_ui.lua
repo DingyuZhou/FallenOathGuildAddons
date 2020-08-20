@@ -1,33 +1,39 @@
 local addonName, namespace = ...
 
+local util = namespace.util
 local Button = namespace.Button
 local MessageDialog = namespace.MessageDialog
 local confirmDialog = namespace.confirmDialog
 local raidRoster = namespace.raidRoster
 
-local raidDkpUi = {}
+local RaidDkpUi = {}
 
-function raidDkpUi:create(dkpTypeRemoveHandler)
-  local raidDkpUiName = "RaidDkpUi"
-  local mainFrameName = raidDkpUiName .. "MainFrame"
-  local inputBoxName = raidDkpUiName .. "InputBox"
-  local outputBoxName = raidDkpUiName .. "OutputBox"
-  local dkpTypeEditBoxName = raidDkpUiName .. "DkpTypeEditBox"
-  local onlineMemberPointEditBoxName = raidDkpUiName .. "OnlineMemberPointEditBox"
-  local offlineMemberPointEditBoxName = raidDkpUiName .. "OfflineMemberPointEditBox"
-  local dkpGenerateButtonName = raidDkpUiName .. "DkpGenerateButton"
-  local dkpGenerateConfirmDialogName = raidDkpUiName .. "dkpGenerateConfirmDialog"
-  local removeDkpTypeButtonName = raidDkpUiName .. "RemoveDkpTypeButton"
-  local removeDkpTypeConfirmDialogName = raidDkpUiName .. "RemoveDkpTypeConfirmDialog"
-  local clearAllDkpButtonName = raidDkpUiName .. "ClearAllDkpButton"
-  local clearAllDkpConfirmDialogName = raidDkpUiName .. "ClearAllDkpConfirmDialog"
-  local closeButtonName = raidDkpUiName .. "CloseButton"
-  local mainFrame = _G[mainFrameName]
+-- Need better refactoring
+function RaidDkpUi:getSingletonInstance()
+  if not self.instance then
+    local newInstance = {}
 
-  if mainFrame then
-    mainFrame:Hide()
-  else
-    local f = CreateFrame("Frame", mainFrameName, UIParent)
+    -- Class syntax
+    self.__index = self
+    newInstance = setmetatable(newInstance, self)
+
+    local raidDkpUiName = "RaidDkpUi"
+    newInstance.mainFrameName = util.generateGlobalValidUiName(raidDkpUiName .. "MainFrame")
+
+    local inputBoxName = raidDkpUiName .. "InputBox"
+    local outputBoxName = raidDkpUiName .. "OutputBox"
+    local dkpTypeEditBoxName = raidDkpUiName .. "DkpTypeEditBox"
+    local onlineMemberPointEditBoxName = raidDkpUiName .. "OnlineMemberPointEditBox"
+    local offlineMemberPointEditBoxName = raidDkpUiName .. "OfflineMemberPointEditBox"
+    local dkpGenerateButtonName = raidDkpUiName .. "DkpGenerateButton"
+    local dkpGenerateConfirmDialogName = raidDkpUiName .. "dkpGenerateConfirmDialog"
+    local removeDkpTypeButtonName = raidDkpUiName .. "RemoveDkpTypeButton"
+    local removeDkpTypeConfirmDialogName = raidDkpUiName .. "RemoveDkpTypeConfirmDialog"
+    local clearAllDkpButtonName = raidDkpUiName .. "ClearAllDkpButton"
+    local clearAllDkpConfirmDialogName = raidDkpUiName .. "ClearAllDkpConfirmDialog"
+    local closeButtonName = raidDkpUiName .. "CloseButton"
+
+    local f = CreateFrame("Frame", newInstance.mainFrameName, UIParent)
     mainFrame = f
     mainFrame:Hide()
 
@@ -103,21 +109,21 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
     obsf:SetScrollChild(ob)
 
     -- DKP Type Edit Box
-    local dneb = CreateFrame("EditBox", dkpTypeEditBoxName, f)
-    dneb:SetMultiLine(false)
-    dneb:SetAutoFocus(false)
-    dneb:SetFontObject("ChatFontNormal")
-    dneb:SetScript("OnEscapePressed", function() f:Hide() end)
-    dneb:SetText("")
-    dneb:SetSize(120, 20)
-    dneb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -60)
-    dneb:SetBackdrop({
+    local dteb = CreateFrame("EditBox", dkpTypeEditBoxName, f)
+    dteb:SetMultiLine(false)
+    dteb:SetAutoFocus(false)
+    dteb:SetFontObject("ChatFontNormal")
+    dteb:SetScript("OnEscapePressed", function() f:Hide() end)
+    dteb:SetText("")
+    dteb:SetSize(120, 20)
+    dteb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -60)
+    dteb:SetBackdrop({
       bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
       insets = { left = -10, right = -10, top = -10, bottom = -10 }
     })
 
     local dkpTypeHintText = f:CreateFontString(f, "OVERLAY", "GameTooltipText")
-    dkpTypeHintText:SetPoint("TOPLEFT", dneb, "TOPLEFT", -8, 25)
+    dkpTypeHintText:SetPoint("TOPLEFT", dteb, "TOPLEFT", -8, 25)
     dkpTypeHintText:SetText("DKP Type")
 
     -- Online Member Points Edit Box
@@ -158,7 +164,7 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
 
     -- DKP Generate Button
     local dkpGenerateHandler = function()
-      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(dneb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
+      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterAddOneDkpType(dteb:GetText(), ib:GetText(), onlinePointEb:GetText(), offlinePointEb:GetText())
       if newRaidMemberNames == "" then
         if dkpStr ~= "" then
           -- has some warnings
@@ -168,11 +174,11 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
           )
           msgDialog:show()
         else
-          dneb:SetText("")
+          dteb:SetText("")
           ob:SetText("")
         end
       else
-        dneb:SetText("")
+        dteb:SetText("")
         ib:SetText(newRaidMemberNames)
         ob:SetText(dkpStr)
       end
@@ -195,7 +201,7 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
 
     -- Remove DKP Type Button
     local dkpTypeRemoveHandler = function()
-      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterRemoveOneDkpType(dneb:GetText())
+      local newRaidMemberNames, dkpStr = raidRoster.generateRaidDkpDetailsAfterRemoveOneDkpType(dteb:GetText())
       if newRaidMemberNames == "" then
         -- has some warnings
         if dkpStr ~= "" then
@@ -206,11 +212,11 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
           )
           msgDialog:show()
         else
-          dneb:SetText("")
+          dteb:SetText("")
           ob:SetText("")
         end
       else
-        dneb:SetText("")
+        dteb:SetText("")
         ib:SetText(newRaidMemberNames)
         ob:SetText(dkpStr)
       end
@@ -248,7 +254,7 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
     f:SetResizable(true)
     f:SetMinResize(800, 450)
 
-    local resizeButtonName = mainFrameName .. "ResizeButton"
+    local resizeButtonName = newInstance.mainFrameName .. "ResizeButton"
     local rb = CreateFrame("Button", resizeButtonName, f)
     rb:SetPoint("BOTTOMRIGHT", -6, 7)
     rb:SetSize(16, 16)
@@ -269,44 +275,90 @@ function raidDkpUi:create(dkpTypeRemoveHandler)
       ib:SetSize(ibsf:GetSize())
       ob:SetSize(obsf:GetSize())
     end)
+
+    newInstance.mainFrame = f
+    newInstance.inputBox = ib
+    newInstance.outputBox = ob
+    newInstance.dkpTypeEditBox = dteb
+    newInstance.onlineMemberPointEditBox = onlinePointEb
+    newInstance.offlineMemberPointEditBox = offlinePointEb
+
+    self.instance = newInstance
   end
 
-  -- Interfaces
-  local inputBox = _G[inputBoxName]
-  local outputBox = _G[outputBoxName]
-  local dkpTypeEditBox = _G[dkpTypeEditBoxName]
-  local onlineMemberPointEditBox = _G[onlineMemberPointEditBoxName]
-  local offlineMemberPointEditBox = _G[offlineMemberPointEditBoxName]
-
-  function mainFrame:setInputBoxText(text)
-    inputBox:SetText(text)
-  end
-
-  function mainFrame:getInputBoxText()
-    return inputBox:GetText()
-  end
-
-  function mainFrame:setOutputBoxText(text)
-    outputBox:SetText(text)
-  end
-
-  function mainFrame:getOutputBoxText()
-    return outputBox:GetText()
-  end
-
-  function mainFrame:getDkpType()
-    return dkpTypeEditBox:GetText()
-  end
-
-  function mainFrame:getOnlineMemberPoints()
-    return onlineMemberPointEditBox:GetText()
-  end
-
-  function mainFrame:getOfflineMemberPoints()
-    return offlineMemberPointEditBox:GetText()
-  end
-
-  return mainFrame
+  return self.instance
 end
 
-namespace.raidDkpUi = raidDkpUi
+function RaidDkpUi:isVisible()
+  if self.mainFrame then
+    return self.mainFrame:IsVisible()
+  else
+    return false
+  end
+end
+
+function RaidDkpUi:show()
+  if self.mainFrame then
+    return self.mainFrame:Show()
+  end
+end
+
+function RaidDkpUi:hide()
+  if self.mainFrame then
+    return self.mainFrame:Hide()
+  end
+end
+
+function RaidDkpUi:setInputBoxText(text)
+  if self.inputBox then
+    self.inputBox:SetText(text)
+  end
+end
+
+function RaidDkpUi:getInputBoxText()
+  if self.inputBox then
+    return self.inputBox:GetText()
+  else
+    return ""
+  end
+end
+
+function RaidDkpUi:setOutputBoxText(text)
+  if self.outputBox then
+    self.outputBox:SetText(text)
+  end
+end
+
+function RaidDkpUi:getOutputBoxText()
+  if self.outputBox then
+    return self.outputBox:GetText()
+  else
+    return ""
+  end
+end
+
+function RaidDkpUi:getDkpType()
+  if self.dkpTypeEditBox then
+    return self.dkpTypeEditBox:GetText()
+  else
+    return ""
+  end
+end
+
+function RaidDkpUi:getOnlineMemberPoints()
+  if self.onlineMemberPointEditBox then
+    return self.onlineMemberPointEditBox:GetText()
+  else
+    return ""
+  end
+end
+
+function RaidDkpUi:getOfflineMemberPoints()
+  if self.offlineMemberPointEditBox then
+    return self.offlineMemberPointEditBox:GetText()
+  else
+    return ""
+  end
+end
+
+namespace.RaidDkpUi = RaidDkpUi

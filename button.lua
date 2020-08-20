@@ -34,6 +34,18 @@ function Button:new(buttonParent, buttonName, buttonText, buttonOnClickHandler, 
   return newInstance
 end
 
+function Button:registerEvent(eventName)
+  if self.button then
+    self.button:RegisterEvent(eventName)
+  end
+end
+
+function Button:setScript(eventName, eventHandler)
+  if self.button then
+    self.button:SetScript(eventName, eventHandler)
+  end
+end
+
 function Button:setText(buttonText)
   if self.button then
     local text = buttonText or "Button"
