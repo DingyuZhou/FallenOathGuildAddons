@@ -14,6 +14,7 @@ addonButton:setScript(
   function(self, eventName, addonName)
     if eventName == "ADDON_LOADED" and addonName == "FallenOathGuildAddons" then
       local raidDkpUiSingletonInstance = RaidDkpUi:getSingletonInstance()
+      raidDkpUiSingletonInstance:loadAndDisplayPersistentlySavedData()
 
       addonButton:setOnClickHandler(
         function()

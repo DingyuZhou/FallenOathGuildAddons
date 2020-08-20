@@ -49,7 +49,7 @@ function raidRoster.clearAll()
   raidRoster.persistentlySaveRaidMemberDkpDetailTable({})
 end
 
-function raidRoster.insertDkpType(newDkpType)
+function raidRoster.isNewDkpType(newDkpType)
   local dkpTypeArray = raidRoster.getDkpTypeArray()
   local isNewDkpType = true
   for index = 1, #dkpTypeArray do
@@ -58,7 +58,12 @@ function raidRoster.insertDkpType(newDkpType)
       break
     end
   end
-  if isNewDkpType then
+  return isNewDkpType
+end
+
+function raidRoster.insertDkpType(newDkpType)
+  local dkpTypeArray = raidRoster.getDkpTypeArray()
+  if raidRoster.isNewDkpType(newDkpType) then
     table.insert(dkpTypeArray, newDkpType)
   end
   raidRoster.persistentlySaveDkpTypeArray(dkpTypeArray)

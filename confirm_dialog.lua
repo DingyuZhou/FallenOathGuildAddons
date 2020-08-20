@@ -1,15 +1,18 @@
 local addonName, namespace = ...
 
-confirmDialog = {}
+local util = namespace.util
 
-function confirmDialog:create(confirmDialogName, onAcceptHandler, confirmDialogConfig)
-  local globalPromptDialogName = confirmDialogName .. "ConfirmDialog"
+ConfirmDialog = {}
+
+function ConfirmDialog:new(confirmDialogName, onAcceptHandler, confirmDialogConfig)
+  local newInstance = {}
   local config = confirmDialogConfig or {}
 
-  StaticPopupDialogs[globalPromptDialogName] = {
+  newInstance.name = util.generateGlobalValidUiName(confirmDialogName)
+  StaticPopupDialogs[newInstance.name] = {
     text = config.text or "Are you sure?",
-    button1 = "Yes",
-    button2 = "No",
+    button1 = config.acceptButtonText or "Yes",
+    button2 = config.denyButtonText or "No",
     OnAccept = onAcceptHandler or (function() return nil end),
     timeout = config.timeout or 0,
     whileDead = config.whileDead or true,
@@ -17,17 +20,23 @@ function confirmDialog:create(confirmDialogName, onAcceptHandler, confirmDialogC
     preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
   }
 
-  local newPromptDialog = {}
+  -- Class syntax
+  self.__index = self
+  newInstance = setmetatable(newInstance, self)
 
-  function newPromptDialog.show()
-    StaticPopup_Show(globalPromptDialogName)
-  end
-
-  function newPromptDialog.hide()
-    StaticPopup_Hide(globalPromptDialogName)
-  end
-
-  return newPromptDialog
+  return newInstance
 end
 
-namespace.confirmDialog = confirmDialog
+function ConfirmDialog:show()
+  if self.name then
+    StaticPopup_Show(self.name)
+  end
+end
+
+function ConfirmDialog:hide()
+  if self.name then
+    StaticPopup_Hide(self.name)
+  end
+end
+
+namespace.ConfirmDialog = ConfirmDialog

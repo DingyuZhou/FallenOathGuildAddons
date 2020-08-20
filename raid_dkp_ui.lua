@@ -3,7 +3,7 @@ local addonName, namespace = ...
 local util = namespace.util
 local Button = namespace.Button
 local MessageDialog = namespace.MessageDialog
-local confirmDialog = namespace.confirmDialog
+local ConfirmDialog = namespace.ConfirmDialog
 local raidRoster = namespace.raidRoster
 
 local RaidDkpUi = {}
@@ -183,17 +183,28 @@ function RaidDkpUi:getSingletonInstance()
         ob:SetText(dkpStr)
       end
     end
-    local dkpGenerateConfirmDialog = confirmDialog:create(dkpGenerateConfirmDialogName, dkpGenerateHandler, { text = "Ready to generate the DKP?" })
+    local dkpGenerateConfirmDialog = ConfirmDialog:new(dkpGenerateConfirmDialogName, dkpGenerateHandler, { text = "Ready to generate the DKP?" })
     local onClickDkpGenerateButton = function()
+      local warningMessage = ""
       if raidRoster.areRaidMemberNamesSameAsPersistentlySavedOnes(ib:GetText()) then
+        warningMessage = warningMessage .. "Warning! Detected that the input raid member names are different than saved ones.\n\nIf it is an accidentally change, please ignore this warning, and click 'Yes' in the following confirm dialog to generate DKP by using saved raid member names.\n\nOtherwise, please click 'No' in the following confirm dialog, and 'Clear All DKP' first before try it again."
+      end
+      local trimmedNewDkpType = util.trimString(dteb:GetText())
+      if not raidRoster.isNewDkpType(trimmedNewDkpType) then
+        if warningMessage ~= "" then
+          warningMessage = warningMessage .. "\n\n----------\n\n"
+        end
+        warningMessage = warningMessage .. "Warning! This DKP type has been added before.\n\nIf you would like to override this DKP type, please ignore this warning, and click 'Yes' in the following confirm dialog to move forward.\n\nOtherwise, please  click 'No' in the following confirm dialog."
+      end
+      if warningMessage ~= "" then
         local msgDialog = MessageDialog:new(
-          raidDkpUiName .. "WarningMessageDialog",
-          "Warning! Detected that the input raid member names are different than saved ones.\n\nIf it is an accidentally change, please ignore this warning, and click 'Yes' in the confirm dialog to generate DKP by using saved raid member names.\n\nOtherwise, please click 'No' in the confirm dialog, and 'Clear All DKP' first before try it again.",
-          function() dkpGenerateConfirmDialog.show() end
+          raidDkpUiName .. "DkpGenerateWarningMessageDialog",
+          warningMessage,
+          function() dkpGenerateConfirmDialog:show() end
         )
         msgDialog:show()
       else
-        dkpGenerateConfirmDialog.show()
+        dkpGenerateConfirmDialog:show()
       end
     end
     local dkpGenerateButton = Button:new(f, dkpGenerateButtonName, "Generate DKP", onClickDkpGenerateButton, { isVisible = true, width = 130 })
@@ -221,17 +232,17 @@ function RaidDkpUi:getSingletonInstance()
         ob:SetText(dkpStr)
       end
     end
-    local removeDkpTypeConfirmDialog = confirmDialog:create(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
+    local removeDkpTypeConfirmDialog = ConfirmDialog:new(removeDkpTypeConfirmDialogName, dkpTypeRemoveHandler, { text = "Are you sure to remove DKP for this DKP type?" })
     local onClickRemoveDkpTypeButton = function()
       if raidRoster.areRaidMemberNamesSameAsPersistentlySavedOnes(ib:GetText()) then
         local msgDialog = MessageDialog:new(
-          raidDkpUiName .. "WarningMessageDialog",
-          "Warning! Detected that the input raid member names are different than saved ones.\n\nIf it is an accidentally change, please ignore this warning, and click 'Yes' in the confirm dialog to remove the DKP type by using saved raid member names.\n\nOtherwise, please click 'No' in the confirm dialog, and 'Clear All DKP' first before try it again.",
-          function() removeDkpTypeConfirmDialog.show() end
+          raidDkpUiName .. "DkpTypeRemoveWarningMessageDialog",
+          "Warning! Detected that the input raid member names are different than saved ones.\n\nIf it is an accidentally change, please ignore this warning, and click 'Yes' in the following confirm dialog to remove the DKP type by using saved raid member names.\n\nOtherwise, please click 'No' in the following confirm dialog, and 'Clear All DKP' first before try it again.",
+          function() removeDkpTypeConfirmDialog:show() end
         )
         msgDialog:show()
       else
-        removeDkpTypeConfirmDialog.show()
+        removeDkpTypeConfirmDialog:show()
       end
     end
     local removeDkpTypeButton = Button:new(f, removeDkpTypeButtonName, "Remove DKP Type", onClickRemoveDkpTypeButton, { isVisible = true, width = 130 })
@@ -242,8 +253,8 @@ function RaidDkpUi:getSingletonInstance()
       raidRoster.clearAll()
       ob:SetText("")
     end
-    local clearAllDkpConfirmDialog = confirmDialog:create(clearAllDkpConfirmDialogName, clearAllDkpHandler, { text = "Are you sure to clear all DKP data?" })
-    local clearAllDkpButton = Button:new(f, clearAllDkpButtonName, "Clear All DKP", clearAllDkpConfirmDialog.show or (function() return nil end), { isVisible = true, width = 130 })
+    local clearAllDkpConfirmDialog = ConfirmDialog:new(clearAllDkpConfirmDialogName, clearAllDkpHandler, { text = "Are you sure to clear all DKP data?" })
+    local clearAllDkpButton = Button:new(f, clearAllDkpButtonName, "Clear All DKP", function() clearAllDkpConfirmDialog:show() end, { isVisible = true, width = 130 })
     clearAllDkpButton:setPoint("TOPRIGHT", f, "TOPRIGHT", -20, -340)
 
     -- Close Button
@@ -307,6 +318,12 @@ function RaidDkpUi:hide()
   if self.mainFrame then
     return self.mainFrame:Hide()
   end
+end
+
+function RaidDkpUi:loadAndDisplayPersistentlySavedData()
+  local memberNameListStr, dkpStr = raidRoster.getMemberNameListStringAndDkpStringFromGlobalState()
+  self:setInputBoxText(memberNameListStr)
+  self:setOutputBoxText(dkpStr)
 end
 
 function RaidDkpUi:setInputBoxText(text)
